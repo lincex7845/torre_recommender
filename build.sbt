@@ -8,7 +8,13 @@ resolvers ++= Seq(
   "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
-val circeVersion = "0.7.0"
+val catsVersion = "0.9.0"
+val circeVersion = "0.8.0"
+val akkaVersion = "2.5.12"
+val akkaHttpCirceVersion = "1.18.1"
+val akkaHttpVersion = "10.1.0"
+val monixVersion = "2.3.3"
+
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
@@ -17,13 +23,16 @@ libraryDependencies ++= Seq(
 ).map(_ % circeVersion)
 
 libraryDependencies ++= Seq(
-  "com.typesafe.scala-logging"	%%  "scala-logging"	          % "3.5.0",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
   //"org.scalatest"		            %   "scalatest_2.12"	      % "3.0.0"   % "test",
-  "org.reactivemongo"           %%  "reactivemongo"            % "0.12.3",
-  "ch.qos.logback"              %   "logback-classic"           % "1.1.3",
-  "com.typesafe.akka"           %   "akka-slf4j_2.12"           % "2.4.14",
-  "com.typesafe.akka"           %%  "akka-http"               % "10.0.0",
-  "de.heikoseeberger"           %%  "akka-http-circe"         % "1.13.0"
+  "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+  "org.typelevel" %% "cats" % catsVersion,
+  "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCirceVersion,
+  "io.monix" %% "monix" % monixVersion,
+  "io.monix" %% "monix-cats" % monixVersion,
 )
 
 scalacOptions ++= Seq(
@@ -43,11 +52,11 @@ scalacOptions ++= Seq(
   "-Xfuture",
   "-Xcheckinit"
 )
- 
+
 publishMavenStyle := true
- 
+
 pomIncludeRepository := { _ => false }
- 
+
 publishArtifact in Test := false
 
 lazy val commonSettings = Seq(
