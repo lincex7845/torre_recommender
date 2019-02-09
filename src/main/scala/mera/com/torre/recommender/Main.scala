@@ -8,6 +8,7 @@ import mera.com.torre.recommender.http.Api
 import mera.com.torre.recommender.http.client.TorreClientImpl
 
 import scala.concurrent.ExecutionContext
+import scala.util.Properties
 
 object Main extends App with Api with LazyLogging {
 
@@ -19,7 +20,11 @@ object Main extends App with Api with LazyLogging {
 
   val api = route
 
-  Http().bindAndHandle(handler = api, interface = "0.0.0.0", port = 8080) map { binding =>
+  val port = Properties.envOrElse("PORT", "8080").toInt
+
+  logger.info(s"Port: $port")
+
+  Http().bindAndHandle(handler = api, interface = "0.0.0.0", port = port) map { binding =>
     logger.info("REST interface bound to {}", binding.localAddress)
   } recover {
     case ex => logger.error(s"REST interface could not bind to", ex.getMessage)
