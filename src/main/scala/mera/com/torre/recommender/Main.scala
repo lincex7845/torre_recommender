@@ -19,7 +19,11 @@ object Main extends App with Api with LazyLogging {
 
   val api = route
 
-  Http().bindAndHandle(handler = api, interface = "0.0.0.0", port = 8080) map { binding =>
+  val port = if (sys.env("PORT").isEmpty) 8080 else Integer.parseInt(sys.env("PORT"))
+
+  logger.info(s"Port: $port")
+
+  Http().bindAndHandle(handler = api, interface = "0.0.0.0", port = port) map { binding =>
     logger.info("REST interface bound to {}", binding.localAddress)
   } recover {
     case ex => logger.error(s"REST interface could not bind to", ex.getMessage)
