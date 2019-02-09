@@ -6,6 +6,7 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.Accept
 import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.ActorMaterializer
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -19,13 +20,13 @@ trait TorreClient {
 
   def getUserBio(username: String): Future[Either[ErrorMessage, User]]
 
-  def getConnections(username: String, criterion: String, limit: Int): Future[Either[ErrorMessage, List[User]]]
+  def getConnections(username: String, criterion: String, limit: Int): Future[Either[ErrorMessage, List[ConnectionResponse]]]
 
-  def getPeople(criterion: String, limit: Int): Future[Either[ErrorMessage, List[User]]]
+  def getPeople(criterion: String, limit: Int): Future[Either[ErrorMessage, List[Person]]]
 
 }
 
-class TorreClientImpl(implicit val as: ActorSystem, val mat: ActorMaterializer, val ec: ExecutionContext) extends TorreClient {
+class TorreClientImpl(implicit val as: ActorSystem, val mat: ActorMaterializer, val ec: ExecutionContext) extends TorreClient with LazyLogging {
 
   import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
   import io.circe.generic.auto._
@@ -37,10 +38,45 @@ class TorreClientImpl(implicit val as: ActorSystem, val mat: ActorMaterializer, 
   private val defaultRequest = HttpRequest(HttpMethods.GET)
     .withHeaders(Accept(MediaTypes.`application/json`))
 
+  override def getUserBio(username: String): Future[Either[ErrorMessage, User]] = {
+
+    val rq = defaultRequest.withUri(uriFrom(getUserBioPath, Some(username)))
+
+    for {
+      res <- sendRequest(rq)
+      _ = logger.info(s"Sending request to: ${rq.uri}")
+      user <- handleResponse[User](res)
+    } yield user
+  }
+
+  override def getConnections(username: String, criterion: String, limit: Int): Future[Either[ErrorMessage, List[ConnectionResponse]]] = {
+    val parameters = Query(Map("q" -> criterion, "limit" -> limit.toString))
+    val uri = uriFrom(getConnectionsPath, Some(username)).withQuery(parameters)
+    val rq = defaultRequest.withUri(uri)
+
+    for {
+      res <- sendRequest(rq)
+      _ = logger.info(s"Sending request to: ${rq.uri}")
+      users <- handleResponse[List[ConnectionResponse]](res)
+    } yield users
+  }
+
+  override def getPeople(criterion: String, limit: Int): Future[Either[ErrorMessage, List[Person]]] = {
+    val parameters = Query(Map("q" -> criterion, "limit" -> limit.toString))
+    val uri = uriFrom(getPeoplePath, None).withQuery(parameters)
+    val rq = defaultRequest.withUri(uri)
+
+    for {
+      res <- sendRequest(rq)
+      _ = logger.info(s"Sending request to: ${rq.uri}")
+      users <- handleResponse[List[Person]](res)
+    } yield users
+  }
+
   private def handleResponse[A](response: HttpResponse)(implicit uma: Unmarshaller[ResponseEntity, A]): Future[Either[ErrorMessage, A]] = {
-    println("Handling response")
+    logger.info(s"Handling response")
     if (response.status.isSuccess()) {
-     Unmarshal(response.entity).to[A].map(Right(_))
+      Unmarshal(response.entity).to[A].map(Right(_))
     }
     else {
       Unmarshal(response.entity).to[ErrorMessage].map(Left(_))
@@ -52,40 +88,6 @@ class TorreClientImpl(implicit val as: ActorSystem, val mat: ActorMaterializer, 
       .withScheme(Uri.httpScheme(securedConnection = true))
       .withHost("torre.bio")
 
-      baseUri.withPath(userName.fold(Uri.Path(path))(u => Uri.Path(String.format(path,u))))
-  }
-
-
-
-  override def getUserBio(username: String): Future[Either[ErrorMessage, User]] = {
-
-    val rq = defaultRequest.withUri(uriFrom(getUserBioPath, Some(username)))
-
-    for {
-      res <- sendRequest(rq)
-      user <- handleResponse[User](res)
-    } yield user
-  }
-
-  override def getConnections(username: String, criterion: String, limit: Int): Future[Either[ErrorMessage, List[User]]] = {
-    val parameters = Query(Map("q" -> criterion, "limit" -> limit.toString))
-    val uri = uriFrom(getConnectionsPath, Some(username)).withQuery(parameters)
-    val rq = defaultRequest.withUri(uri)
-
-    for {
-      res <- sendRequest(rq)
-      users <- handleResponse[List[User]](res)
-    } yield users
-  }
-
-  override def getPeople(criterion: String, limit: Int): Future[Either[ErrorMessage, List[User]]] = {
-    val parameters = Query(Map("q" -> criterion, "limit" -> limit.toString))
-    val uri = uriFrom(getPeoplePath, None).withQuery(parameters)
-    val rq = defaultRequest.withUri(uri)
-
-    for {
-      res <- sendRequest(rq)
-      users <- handleResponse[List[User]](res)
-    } yield users
+    baseUri.withPath(userName.fold(Uri.Path(path))(u => Uri.Path(String.format(path, u))))
   }
 }

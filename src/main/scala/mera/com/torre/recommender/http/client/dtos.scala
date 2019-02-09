@@ -1,23 +1,27 @@
 package mera.com.torre.recommender.http.client
 
-trait DTO
+case class ErrorMessage(code: String, message: String)
 
-case class ErrorMessage(code: String, message: String) extends DTO
+case class ConnectionResponse(
+                person: Person,
+                degrees: Long
+                             )
 
 case class User(
                  person: Person,
                  strengths: List[Strength],
                  aspirations: List[Aspiration],
                  opportunities: List[Opportunity]
-               ) extends DTO
+               )
 
 case class Person(
-                   publicId: String,
+                  id: String,
+                  publicId: String,
                   name: String,
-                  email: String,
-                  professionalHeadline: String,
-                  location: String,
-                  picture: String,
+                  email: Option[String],
+                  professionalHeadline: Option[String],
+                  location: Option[String],
+                  picture: Option[String],
                   weight: Double,
                   stats: Stats
                  )
