@@ -23,16 +23,14 @@ libraryDependencies ++= Seq(
 ).map(_ % circeVersion)
 
 libraryDependencies ++= Seq(
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
-  //"org.scalatest"		            %   "scalatest_2.12"	      % "3.0.0"   % "test",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
+  "ch.qos.logback"              %   "logback-classic"           % "1.2.3",
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "org.typelevel" %% "cats" % catsVersion,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
   "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCirceVersion,
-  "io.monix" %% "monix" % monixVersion,
-  "io.monix" %% "monix-cats" % monixVersion,
 )
 
 scalacOptions ++= Seq(
