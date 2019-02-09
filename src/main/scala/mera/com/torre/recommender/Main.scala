@@ -8,6 +8,7 @@ import mera.com.torre.recommender.http.Api
 import mera.com.torre.recommender.http.client.TorreClientImpl
 
 import scala.concurrent.ExecutionContext
+import scala.util.Properties
 
 object Main extends App with Api with LazyLogging {
 
@@ -19,7 +20,7 @@ object Main extends App with Api with LazyLogging {
 
   val api = route
 
-  val port = if (sys.env("PORT").isEmpty) 8080 else Integer.parseInt(sys.env("PORT"))
+  val port = Properties.envOrElse("PORT", "8080").toInt
 
   logger.info(s"Port: $port")
 
