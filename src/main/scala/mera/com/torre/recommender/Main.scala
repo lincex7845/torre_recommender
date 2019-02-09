@@ -4,8 +4,8 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
-import mera.com.torre.recommender.client.TorreClientImpl
 import mera.com.torre.recommender.http.Api
+import mera.com.torre.recommender.http.client.TorreClientImpl
 
 import scala.concurrent.ExecutionContext
 
