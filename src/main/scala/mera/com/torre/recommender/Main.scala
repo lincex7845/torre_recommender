@@ -4,13 +4,13 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
-import mera.com.torre.recommender.http.Api
+import mera.com.torre.recommender.http.{Api, CorsSupport}
 import mera.com.torre.recommender.http.client.TorreClientImpl
 
 import scala.concurrent.ExecutionContext
 import scala.util.Properties
 
-object Main extends App with Api with LazyLogging {
+object Main extends App with Api with CorsSupport with LazyLogging {
 
   implicit val system: ActorSystem                               = ActorSystem("test")
   implicit val mat: ActorMaterializer                   = ActorMaterializer()
