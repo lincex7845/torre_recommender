@@ -9,7 +9,7 @@ import akka.http.scaladsl.model.HttpMethods.GET
 trait CorsSupport {
   private def addAccessControlHeaders: Directive0 = {
     respondWithHeaders(
-      `Access-Control-Allow-Origin`("*"),
+      `Access-Control-Allow-Origin`.*,
       `Access-Control-Allow-Credentials`(true),
       `Access-Control-Allow-Headers`("Authorization", "Content-Type", "X-Requested-With")
     )
