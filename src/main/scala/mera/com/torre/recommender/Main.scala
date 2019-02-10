@@ -24,7 +24,7 @@ object Main extends App with Api with CorsSupport with LazyLogging {
 
   logger.info(s"Port: $port")
 
-  Http().bindAndHandle(handler = api, interface = "0.0.0.0", port = port) map { binding =>
+  Http().bindAndHandle(handler = corsHandler(api), interface = "0.0.0.0", port = port) map { binding =>
     logger.info("REST interface bound to {}", binding.localAddress)
   } recover {
     case ex => logger.error(s"REST interface could not bind to", ex.getMessage)
