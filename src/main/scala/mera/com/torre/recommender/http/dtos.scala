@@ -1,4 +1,4 @@
-package mera.com.torre.recommender.http.client
+package mera.com.torre.recommender.http
 
 case class ErrorMessage(code: String, message: String)
 
@@ -42,3 +42,5 @@ case class Opportunity(
                       )
 
 case class Stats(recommendations: Long, signalers: Long)
+
+case class Recommendation(user: User, similarity:Double)

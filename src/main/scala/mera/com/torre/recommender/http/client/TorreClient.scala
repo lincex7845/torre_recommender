@@ -7,6 +7,7 @@ import akka.http.scaladsl.model.headers.Accept
 import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
+import mera.com.torre.recommender.http._
 
 import scala.concurrent.{ExecutionContext, Future}
 

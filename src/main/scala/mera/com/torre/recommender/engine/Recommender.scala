@@ -5,6 +5,7 @@ import cats.instances.future._
 import cats.instances.list._
 import cats.syntax.traverse._
 import com.typesafe.scalalogging.LazyLogging
+import mera.com.torre.recommender.http._
 import mera.com.torre.recommender.http.client._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,7 +17,7 @@ trait Recommender { this: LazyLogging =>
   def client: TorreClient
   implicit def ec: ExecutionContext
 
-  def recommendUsers(username: String): Future[Either[ErrorMessage, List[(User, Double)]]] = {
+  def recommendUsers(username: String): Future[Either[ErrorMessage, List[Recommendation]]] = {
     logger.info(s"Getting recommendations for $username")
 
     val getUserBio: EitherT[Future, ErrorMessage, User] = EitherT(client.getUserBio(username))
@@ -28,11 +29,11 @@ trait Recommender { this: LazyLogging =>
       people <- getPeople
     } yield filterNotConnected(connections, people, username)
 
-    val recommendedPeople: EitherT[Future, ErrorMessage, List[(User, Double)]] = for {
+    val recommendedPeople: EitherT[Future, ErrorMessage, List[Recommendation]] = for {
       user <- getUserBio
       people <- peopleToConnect
       x <- people.par.map(p => getRecommendation(user, p)).toList.sequenceU
-    } yield x.map(s => (s.anotherUser, s.similarity)).sortBy(_._2).reverse
+    } yield x.map(s => Recommendation(s.anotherUser, s.similarity)).sortBy(_.similarity).reverse
     recommendedPeople.value
   }
 

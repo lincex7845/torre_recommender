@@ -1,6 +1,6 @@
 package mera.com.torre.recommender.engine
 
-import mera.com.torre.recommender.http.client.User
+import mera.com.torre.recommender.http._
 
 case class VectorSimilarity(strengths: Double, aspirations: Double, opportunities: Double){
   def toArray = Array(strengths, aspirations, opportunities)
