@@ -63,9 +63,10 @@ trait Api extends Directives with CorsSupport with Recommender { this: LazyLoggi
           onComplete(recommendUsers(username)){
             case Success(value) =>
               value match {
-                case Right(list) =>
-                  logger.info(s"Recommended people: ${list.size}")
-                  complete(StatusCodes.OK -> list.take(20))
+                case Right(response) =>
+                  logger.info(s"Recommended people: ${response.recommendations.size}")
+                  val topRecommendations = response.recommendations.take(20)
+                  complete(StatusCodes.OK -> response.copy(recommendations = topRecommendations))
                 case Left(error) => complete(StatusCodes.BadRequest -> error)
               }
             case Failure(ex) =>

@@ -32,8 +32,8 @@ object Main extends App with Api with LazyLogging {
   val lfuCacheSettings: LfuCacheSettings = defaultCachingSettings.lfuCacheSettings
     .withInitialCapacity(25)
     .withMaxCapacity(50)
-    .withTimeToLive(20.seconds)
-    .withTimeToIdle(10.seconds)
+    .withTimeToLive(30.minutes)
+    .withTimeToIdle(290.seconds)
 
   val cachingSettings: CachingSettings =
     defaultCachingSettings.withLfuCacheSettings(lfuCacheSettings)

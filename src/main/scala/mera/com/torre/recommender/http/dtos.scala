@@ -43,4 +43,6 @@ case class Opportunity(
 
 case class Stats(recommendations: Long, signalers: Long)
 
+case class RecommendationsResponse(user: User, recommendations: List[Recommendation])
+
 case class Recommendation(user: User, similarity:Double)

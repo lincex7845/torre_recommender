@@ -17,7 +17,7 @@ trait Recommender { this: LazyLogging =>
   def client: TorreClient
   implicit def ec: ExecutionContext
 
-  def recommendUsers(username: String): Future[Either[ErrorMessage, List[Recommendation]]] = {
+  def recommendUsers(username: String): Future[Either[ErrorMessage, RecommendationsResponse]] = {
     logger.info(s"Getting recommendations for $username")
 
     val getUserBio: EitherT[Future, ErrorMessage, User] = EitherT(client.getUserBio(username))
@@ -29,11 +29,14 @@ trait Recommender { this: LazyLogging =>
       people <- getPeople
     } yield filterNotConnected(connections, people, username)
 
-    val recommendedPeople: EitherT[Future, ErrorMessage, List[Recommendation]] = for {
+    val recommendedPeople: EitherT[Future, ErrorMessage, RecommendationsResponse] = for {
       user <- getUserBio
       people <- peopleToConnect
       x <- people.par.map(p => getRecommendation(user, p)).toList.sequenceU
-    } yield x.map(s => Recommendation(s.anotherUser, s.similarity)).sortBy(_.similarity).reverse
+    } yield {
+      val recommendations = x.map(s => Recommendation(s.anotherUser, s.similarity)).sortBy(_.similarity).reverse
+      RecommendationsResponse(user, recommendations)
+    }
     recommendedPeople.value
   }
 
