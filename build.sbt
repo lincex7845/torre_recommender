@@ -5,7 +5,8 @@ name := "torre_recomender"
 scalaVersion := "2.12.4"
 
 resolvers ++= Seq(
-  "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/"
+  "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/",
+  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/public"
 )
 
 val catsVersion = "0.9.0"
@@ -30,6 +31,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  "com.typesafe.akka" %% "akka-http-caching" % akkaHttpVersion,
   "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCirceVersion,
 )
 

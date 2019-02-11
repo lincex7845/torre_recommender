@@ -13,7 +13,7 @@ import mera.com.torre.recommender.http.client.TorreClient
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
-trait Api extends Directives with Recommender { this: LazyLogging =>
+trait Api extends Directives with CorsSupport with Recommender { this: LazyLogging =>
 
   implicit def system: ActorSystem
 
@@ -23,7 +23,7 @@ trait Api extends Directives with Recommender { this: LazyLogging =>
 
   def client : TorreClient
 
-  val route: Route =
+  private val innerRoute: Route =
     pathPrefix("user"){
       get{
         path(Segment){ username =>
@@ -80,4 +80,6 @@ trait Api extends Directives with Recommender { this: LazyLogging =>
         }
       }
     }
+
+  val route: Route = corsHandler(innerRoute)
 }
