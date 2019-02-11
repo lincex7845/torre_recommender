@@ -40,7 +40,7 @@ object Main extends App with Api with LazyLogging {
 
   val lfuCache: Cache[Uri, RouteResult] = LfuCache(cachingSettings)
 
-  val api = alwaysCache(lfuCache, keyerFunction)(corsHandler(route))
+  val api = alwaysCache(lfuCache, keyerFunction)(route)
 
   val port = Properties.envOrElse("PORT", "8080").toInt
 
