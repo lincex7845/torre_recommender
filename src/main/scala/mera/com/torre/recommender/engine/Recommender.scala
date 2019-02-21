@@ -34,7 +34,10 @@ trait Recommender { this: LazyLogging =>
       people <- peopleToConnect
       x <- people.par.map(p => getRecommendation(user, p)).toList.sequenceU
     } yield {
-      val recommendations = x.map(s => Recommendation(s.anotherUser, s.similarity)).sortBy(_.similarity).reverse
+      val recommendations = x.map(s => Recommendation(s.anotherUser, s.similarity))
+        .filter(_.similarity > 0d)
+        .sortBy(_.similarity)
+        .reverse
       RecommendationsResponse(user, recommendations)
     }
     recommendedPeople.value
