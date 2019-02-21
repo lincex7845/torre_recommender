@@ -16,11 +16,11 @@ object VectorSimilarity{
 
     val a1 = mainUser.aspirations.map(_.name)
     val a2 = user.aspirations.map(_.name)
-    val aspirationsSimilarity = calculateStrengthsTFIDF(a1, a2)
+    val aspirationsSimilarity = calculateAspirationsTFIDF(a1, a2)
 
-    val o1 = mainUser.opportunities.filter(_.active).map(_.name)
-    val o2 = user.opportunities.filter(_.active).map(_.name)
-    val opportunitiesSimilarity = calculateStrengthsTFIDF(o1,o2)
+    val o1 = mainUser.opportunities.filter(_.data).map(_.interest)
+    val o2 = user.opportunities.filter(_.data).map(_.interest)
+    val opportunitiesSimilarity = calculateOpportunitiesTFIDF(o1,o2)
 
 
     new VectorSimilarity(strengthsSimilarity, aspirationsSimilarity, opportunitiesSimilarity)

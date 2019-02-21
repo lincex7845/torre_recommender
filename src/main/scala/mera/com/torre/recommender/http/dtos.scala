@@ -37,8 +37,8 @@ case class Aspiration(
                      )
 
 case class Opportunity(
-                        name: String,
-                        active: Boolean
+                        interest: String,
+                        data: Boolean
                       )
 
 case class Stats(recommendations: Long, signalers: Long)
